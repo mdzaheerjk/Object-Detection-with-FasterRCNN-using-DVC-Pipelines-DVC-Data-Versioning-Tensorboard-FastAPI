@@ -4,7 +4,7 @@ This project implements an end-to-end object detection workflow using Faster R-C
 ## Project Preview
 
 <p align="center">
-  <img src="https://backend.krishnaik.in/media/project_banners/-gemini_generated_image_2l32z2l32z2l32z2-d630769f49499adbfc36fc1a5035308a.jpg"
+  <img src="https://d14omfvx1qlabb.cloudfront.net/krishnaik.in/media/project_banners/-gemini_generated_image_2l32z2l32z2l32z2-d630769f49499adbfc36fc1a5035308a.jpg"
        alt="Project Preview"
        width="600" />
 </p>
