@@ -76,4 +76,4 @@ if __name__=="__main__":
     
     print("Image Shape : ",image.shape)
     print("Target Keys : ",target.keys())
-    print("Bounding Boxes":target['boxes'])
+    print("Bounding Boxes",target['boxes'])
