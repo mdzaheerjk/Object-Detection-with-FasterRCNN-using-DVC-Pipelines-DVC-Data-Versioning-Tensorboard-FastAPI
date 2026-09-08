@@ -1,0 +1,187 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Gun & Weapon Object Detection Studio | Faster R-CNN</title>
+  <meta name="description" content="End-to-end Object Detection studio powered by PyTorch Faster R-CNN with ResNet-50 FPN, DVC Pipelines, and FastAPI.">
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&family=Outfit:wght@400;500;600;700;800&display=swap" rel="stylesheet">
+  <link rel="stylesheet" href="/static/css/style.css">
+</head>
+<body>
+
+  <!-- Navigation Bar -->
+  <header class="navbar">
+    <div class="brand-container">
+      <div class="brand-icon">
+        <svg viewBox="0 0 24 24">
+          <path d="M12 2C6.48 2 2 6.48 2 12s4.48 10 10 10 10-4.48 10-10S17.52 2 12 2zm1 17.93c-3.95-.49-7-3.85-7-7.93 0-.62.08-1.21.21-1.79L9 15v1c0 1.1.9 2 2 2v1.93zm6.9-2.54c-.26-.81-1-1.39-1.9-1.39h-1v-3c0-.55-.45-1-1-1H8v-2h2c.55 0 1-.45 1-1V7h2c1.1 0 2-.9 2-2v-.41c2.93 1.19 5 4.06 5 7.41 0 2.08-.8 3.97-2.1 5.39z"/>
+        </svg>
+      </div>
+      <div class="brand-text">
+        <h1>Guns Detection AI</h1>
+        <p>Faster R-CNN ResNet50-FPN</p>
+      </div>
+    </div>
+
+    <div class="nav-badges">
+      <div class="badge badge-device" id="deviceBadge">
+        <span class="pulse-dot"></span>
+        <span id="deviceText">PyTorch GPU</span>
+      </div>
+      <div class="badge badge-model">
+        <span>PyTorch 2.6</span>
+      </div>
+    </div>
+  </header>
+
+  <!-- Main Container -->
+  <main class="main-container">
+    
+    <!-- Hero Header -->
+    <section class="hero-section">
+      <span class="hero-tag">Real-Time Computer Vision</span>
+      <h2 class="hero-title">High Precision <span>Weapon Detection</span> Studio</h2>
+      <p class="hero-subtitle">Upload any image to detect handguns and firearms instantly using deep convolutional neural networks with bounding box localizations.</p>
+    </section>
+
+    <!-- App Grid -->
+    <div class="app-grid">
+      
+      <!-- Left Panel: Upload & Controls -->
+      <div class="glass-card">
+        <h3 class="card-title">
+          <svg width="20" height="20" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" d="M4 16l4.586-4.586a2 2 0 012.828 0L16 16m-2-2l1.586-1.586a2 2 0 012.828 0L20 14m-6-6h.01M6 20h12a2 2 0 002-2V6a2 2 0 00-2-2H6a2 2 0 00-2 2v12a2 2 0 002 2z"></path></svg>
+          Input Source
+        </h3>
+
+        <!-- Drag & Drop Zone -->
+        <div class="dropzone" id="dropzone">
+          <div class="dropzone-icon">
+            <svg width="26" height="26" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" d="M7 16a4 4 0 01-.88-7.903A5 5 0 1115.9 6L16 6a5 5 0 011 9.9M15 13l-3-3m0 0l-3 3m3-3v12"></path></svg>
+          </div>
+          <div class="dropzone-title">Drop your image here</div>
+          <div class="dropzone-desc">Supports JPG, JPEG, PNG, WEBP (or click to browse)</div>
+          <input type="file" id="fileInput" class="file-input" accept="image/*">
+        </div>
+
+        <!-- Controls: Confidence Slider -->
+        <div class="control-group">
+          <div class="control-label">
+            <span>Confidence Threshold</span>
+            <span class="control-val" id="confidenceVal">0.65</span>
+          </div>
+          <input type="range" id="confidenceSlider" class="range-slider" min="0.10" max="0.95" step="0.05" value="0.65">
+        </div>
+
+        <!-- Quick Sample Presets -->
+        <div class="presets-group">
+          <div class="presets-label">Quick Test Samples</div>
+          <div class="presets-grid">
+            <button class="preset-btn" data-src="/static/sample_1.jpg" id="sample1Btn">
+              <img src="/static/sample_1.jpg" alt="Sample 1" onerror="this.src='https://images.unsplash.com/photo-1595590424283-b8f17842773f?w=150'">
+              <span>Sample 1</span>
+            </button>
+            <button class="preset-btn" data-src="/static/sample_2.jpg" id="sample2Btn">
+              <img src="/static/sample_2.jpg" alt="Sample 2" onerror="this.src='https://images.unsplash.com/photo-1584441405886-bc91be61e56a?w=150'">
+              <span>Sample 2</span>
+            </button>
+            <button class="preset-btn" data-src="/static/sample_3.jpg" id="sample3Btn">
+              <img src="/static/sample_3.jpg" alt="Sample 3" onerror="this.src='https://images.unsplash.com/photo-1585250004680-753f30ab614e?w=150'">
+              <span>Sample 3</span>
+            </button>
+          </div>
+        </div>
+
+        <!-- Trigger Detection Button -->
+        <button class="btn-primary" id="detectBtn" disabled>
+          <svg width="20" height="20" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" d="M13 10V3L4 14h7v7l9-11h-7z"></path></svg>
+          Run Detection
+        </button>
+
+      </div>
+
+      <!-- Right Panel: Viewer & Results -->
+      <div class="glass-card viewer-card">
+        
+        <!-- Viewer Header & Tabs -->
+        <div class="viewer-header">
+          <h3 class="card-title" style="margin-bottom: 0;">
+            <svg width="20" height="20" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" d="M15 12a3 3 0 11-6 0 3 3 0 016 0z"></path><path stroke-linecap="round" stroke-linejoin="round" d="M2.458 12C3.732 7.943 7.523 5 12 5c4.478 0 8.268 2.943 9.542 7-1.274 4.057-5.064 7-9.542 7-4.477 0-8.268-2.943-9.542-7z"></path></svg>
+            Inference Preview
+          </h3>
+          <div class="view-tabs">
+            <button class="view-tab" id="tabOriginal">Original</button>
+            <button class="view-tab active" id="tabDetected">Detected</button>
+          </div>
+        </div>
+
+        <!-- Viewer Content Area -->
+        <div class="viewer-content" id="viewerContent">
+          
+          <!-- Empty State Placeholder -->
+          <div class="empty-state" id="emptyState">
+            <div class="empty-state-icon">
+              <svg width="32" height="32" fill="none" stroke="currentColor" stroke-width="1.5" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" d="M4 16l4.586-4.586a2 2 0 012.828 0L16 16m-2-2l1.586-1.586a2 2 0 012.828 0L20 14m-6-6h.01M6 20h12a2 2 0 002-2V6a2 2 0 00-2-2H6a2 2 0 00-2 2v12a2 2 0 002 2z"></path></svg>
+            </div>
+            <h3>No Image Selected</h3>
+            <p>Upload an image or pick a test sample from the left panel to begin</p>
+          </div>
+
+          <!-- Active Image Display -->
+          <div class="image-display-container" id="imageContainer">
+            <img id="resultImage" class="result-image" alt="Detection Output">
+          </div>
+
+          <!-- Loading Overlay -->
+          <div class="loading-overlay" id="loadingOverlay">
+            <div class="spinner"></div>
+            <div class="loading-text" id="loadingText">Analyzing image with Faster R-CNN...</div>
+          </div>
+
+        </div>
+
+        <!-- Real-time Metrics Deck -->
+        <div class="metrics-deck">
+          <div class="metric-card highlight">
+            <div class="metric-label">Objects Found</div>
+            <div class="metric-value" id="metricCount">-</div>
+          </div>
+          <div class="metric-card">
+            <div class="metric-label">Max Confidence</div>
+            <div class="metric-value" id="metricConfidence">-</div>
+          </div>
+          <div class="metric-card">
+            <div class="metric-label">Latency</div>
+            <div class="metric-value" id="metricLatency">-</div>
+          </div>
+        </div>
+
+        <!-- Action Buttons -->
+        <div class="viewer-actions">
+          <button class="btn-secondary" id="resetBtn">
+            <svg width="18" height="18" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" d="M4 4v5h.582m15.356 2A8.001 8.001 0 004.582 9m0 0H9m11 11v-5h-.581m0 0a8.003 8.003 0 01-15.357-2m15.357 2H15"></path></svg>
+            Reset
+          </button>
+          <button class="btn-secondary" id="downloadBtn" style="display: none;">
+            <svg width="18" height="18" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" d="M4 16v1a3 3 0 003 3h10a3 3 0 003-3v-1m-4-4l-4 4m0 0l-4-4m4 4V4"></path></svg>
+            Download Result
+          </button>
+        </div>
+
+      </div>
+
+    </div>
+
+  </main>
+
+  <!-- Footer -->
+  <footer class="footer">
+    <p>Object Detection Engine powered by <span>Faster R-CNN ResNet-50 FPN</span> & <span>FastAPI</span></p>
+  </footer>
+
+  <script src="/static/js/script.js"></script>
+</body>
+</html>
